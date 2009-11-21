@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name              = "relay"
-  s.version           = "0.0.2"
+  s.version           = "0.0.3"
   s.summary           = "Relay commands over SSH"
   s.description       = "Relay allows you to execute remote commands via SSH with ease."
   s.authors           = ["Damian Janowski", "Michel Martens"]
