@@ -1,0 +1,21 @@
+#! /usr/bin/env ruby -rubygems
+
+require File.join(File.dirname(__FILE__), "..", "lib", "relay")
+
+# A way to extend Relay is to write tasks in a Thorfile in the project's root directory.
+# Relay loads the Thorfile if there is one, and all the tasks that are declared in the
+# class Relay become available.
+if File.exists?("Thorfile")
+  load("Thorfile")
+end
+
+# Start the relay tasks.
+if ARGV[0] && File.exists?(ARGV[0])
+  file = ARGV.shift
+
+  ARGV.each do |server|
+    Relay.new.recipe(file, server)
+  end
+else
+  Relay.start
+end
