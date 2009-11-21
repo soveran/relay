@@ -1,6 +1,7 @@
 require "rubygems"
 require "contest"
 require "fileutils"
+require File.join(File.dirname(__FILE__), "..", "lib", "relay")
 
 ROOT = File.expand_path(File.join(File.dirname(__FILE__), ".."))
 

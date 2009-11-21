@@ -38,5 +38,10 @@ class TestRelay < Test::Unit::TestCase
         assert out["recipe.sh"]
       end
     end
+
+    should "return the output when used programmatically" do
+      assert_equal ["foo\n"], Relay.execute("echo foo", "localhost")
+      assert_equal ["foo\n", "bar\n", "baz\n"], Relay.execute("echo foo; echo bar; echo baz", "localhost")
+    end
   end
 end

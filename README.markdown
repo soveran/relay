@@ -37,6 +37,12 @@ You can also add your public key to a remote server's authorized keys file:
 
     $ relay identify myserver
 
+Relay exposes the `execute` method, which returns the output of the command:
+
+    >> require "relay"
+    >> Relay.execute "echo foo", "myserver"
+    => ["foo\n"]
+
 Installation
 ------------
 
