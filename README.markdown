@@ -51,7 +51,7 @@ Installation
 License
 -------
 
-Copyright (c) 2009 Michel Martens and Damian Janowski
+Copyright (c) 2009, 2010 Michel Martens and Damian Janowski
 
 Permission is hereby granted, free of charge, to any person
 obtaining a copy of this software and associated documentation
