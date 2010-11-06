@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name              = "relay"
-  s.version           = "0.0.3"
+  s.version           = "0.1.0"
   s.summary           = "Relay commands over SSH"
   s.description       = "Relay allows you to execute remote commands via SSH with ease."
   s.authors           = ["Damian Janowski", "Michel Martens"]
@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
 
   s.executables << "relay"
 
-  s.add_dependency("thor", "~> 0.11")
+  s.add_dependency("clap")
 
   s.files = ["LICENSE", "README.markdown", "Rakefile", "bin/relay", "lib/relay.rb", "relay.gemspec", "test/commands.rb", "test/relay_test.rb", "test/test_helper.rb"]
 end
