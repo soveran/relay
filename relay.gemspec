@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.rubyforge_project = "relay"
 
-  s.executables << "relay"
+  s.executables.push("relay")
 
   s.add_dependency("clap")
 
