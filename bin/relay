@@ -1,21 +1,64 @@
-#! /usr/bin/env ruby -rubygems
+#! /usr/bin/env ruby
 
-require File.join(File.dirname(__FILE__), "..", "lib", "relay")
+help = <<-EOS
+RELAY(1)
 
-# A way to extend Relay is to write tasks in a Thorfile in the project's root directory.
-# Relay loads the Thorfile if there is one, and all the tasks that are declared in the
-# class Relay become available.
-if File.exists?("Thorfile")
-  load("Thorfile")
+NAME
+      relay -- Relay commands over SSH.
+
+SYNOPSIS
+      relay [-c command] [-f recipe] server1 [server2 ...]
+
+DESCRIPTION
+      Relay is a simple library that allows you to send commands over SSH. It uses
+      your own SSH, not a Ruby version, so you can profit from your settings and
+      public/private keys.
+
+      The following options are available:
+
+      -c command
+          Executes the command on the passed servers.
+
+      -f recipe
+          Reads commands from a file and executes them in the passed servers.
+
+USAGE
+      To send a command to two servers called `server1` and `server2`:
+
+          $ relay -c "ls -al" server1 server2
+          $ relay -c "cd foo; ls" server1 server2
+          $ relay -c "cd foo" -c "ls" server1 server2
+
+      If you want to send more commands, you can write a shell script:
+
+          $ cat recipe.sh
+            cd foo
+            ls
+            mkdir -p bar/baz
+
+          $ relay -f recipe.sh server1 server2
+
+      It will execute those commands on both servers and show the output.
+
+
+      You can use each flag many times, so this is possible:
+
+          $ relay -f recipe1.sh -f recipe2.sh server1 server2 server3
+EOS
+
+if ARGV.empty?
+  puts help
+  exit
 end
 
-# Start the relay tasks.
-if ARGV[0] && File.exists?(ARGV[0])
-  file = ARGV.shift
+require "clap"
 
-  ARGV.each do |server|
-    Relay.new.recipe(file, server)
-  end
-else
-  Relay.start
-end
+require File.expand_path("../lib/relay", File.dirname(__FILE__))
+
+relay = Relay.new
+
+servers = Clap.run ARGV,
+  "-f" => relay.method(:recipe),
+  "-c" => relay.method(:command)
+
+relay.run(servers)

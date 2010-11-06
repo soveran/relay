@@ -10,13 +10,22 @@ Relay is a simple library that allows you to send commands over SSH.
 It uses your own SSH, not a Ruby version, so you can profit from your
 settings and public/private keys.
 
+The following options are available:
+
+    -c command
+        Executes the command on the passed servers.
+
+    -f recipe
+        Reads commands from a file and executes them in the passed servers.
+
 Usage
 -----
 
-To send a command to a server called `myserver`:
+To send a command to two servers called `server1` and `server2`:
 
-    $ relay execute "ls -al" myserver
-    $ relay execute "cd foo; ls" myserver
+    $ relay -c "ls -al" server1 server2
+    $ relay -c "cd foo; ls" server1 server2
+    $ relay -c "cd foo" -c "ls" server1 server2
 
 If you want to send more commands, you can write a shell script:
 
@@ -25,28 +34,19 @@ If you want to send more commands, you can write a shell script:
       ls
       mkdir -p bar/baz
 
-    $ relay recipe.sh myserver
+    $ relay -f recipe.sh server1 server2
 
-It will execute those commands on `myserver` and show the output.
+It will execute those commands on both servers and show the output.
 
-This last form accepts one file as the recipe and one or many servers:
 
-    $ relay recipe.sh server1 server2 server3
+You can use each flag many times, so this is possible:
 
-You can also add your public key to a remote server's authorized keys file:
-
-    $ relay identify myserver
-
-Relay exposes the `execute` method, which returns the output of the command:
-
-    >> require "relay"
-    >> Relay.execute "echo foo", "myserver"
-    => ["foo\n"]
+    $ relay -f recipe1.sh -f recipe2.sh server1 server2 server3
 
 Installation
 ------------
 
-    $ sudo gem install relay
+    $ gem install relay
 
 License
 -------

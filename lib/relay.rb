@@ -1,6 +1,5 @@
 #! /usr/bin/env ruby
 
-require "thor"
 require "open3"
 
 class Ssh
@@ -42,47 +41,33 @@ class Ssh
   end
 end
 
-class Relay < Thor
-
-  # If you require the relay library, you can issue commands
-  # with the execute method:
-  #
-  # @example
-  #
-  #     >> require "relay"
-  #     >> Relay.execute "echo foo", "myserver"
-  #     => ["foo\n"]
-  def self.execute(*args)
-    start args.unshift("execute").push("--quiet")
+class Relay
+  def initialize
+    @recipes = []
+    @commands = []
   end
 
-  desc "identify SERVER", "Copies your public key to a remote server"
-  method_option :key, :type => :string, :aliases => "-k"
-  method_option :path, :type => :string, :aliases => "-p"
-  def identify(server)
-    path = options[:path] || "~/.ssh/authorized_keys"
-    keys = [options[:key], "~/.ssh/id_rsa.pub", "~/.ssh/id_dsa.pub"].compact
-    key = keys.find { |k| File.exists?(File.expand_path(k)) }
-
-    if system %Q{cat #{key} | ssh #{server} "cat >> #{path}"}
-      say_status :copied, "#{key} to #{server}:#{path}"
-    end
+  def recipe(recipe)
+    @recipes << recipe
   end
 
-  desc "recipe RECIPE SERVER", "Execute commands contained in RECIPE in the context of SERVER"
-  def recipe(recipe, server)
-    Ssh.new(server).start do |session|
-      File.readlines(recipe).each do |command|
-        session.run(command)
+  def command(command)
+    @commands << command
+  end
+
+  def run(servers)
+    servers.each do |server|
+      Ssh.new(server).start do |session|
+        @commands.each do |command|
+          session.run(command)
+        end
+
+        @recipes.each do |recipe|
+          File.readlines(recipe).each do |command|
+            session.run(command)
+          end
+        end
       end
-    end
-  end
-
-  desc "execute COMMAND SERVER", "Execute COMMAND in the context of SERVER"
-  method_option :quiet, :type => :boolean, :aliases => "-q"
-  def execute(command, server)
-    Ssh.new(server, options[:quiet]).start do |session|
-      session.run(command)
     end
   end
 end

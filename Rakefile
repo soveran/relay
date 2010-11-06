@@ -1,5 +1,7 @@
 task :test do
-  system "cd test && ruby relay_test.rb"
+  require "cutest"
+
+  Cutest.run(Dir["test/relay_test.rb"])
 end
 
 task :default => :test

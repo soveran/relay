@@ -1,34 +1,25 @@
 require "rubygems"
-require "contest"
 require "fileutils"
-require File.join(File.dirname(__FILE__), "..", "lib", "relay")
+
+require File.expand_path("../lib/relay", File.dirname(__FILE__))
+require File.expand_path("commands", File.dirname(__FILE__))
+
+include Commands
 
 ROOT = File.expand_path(File.join(File.dirname(__FILE__), ".."))
 
 $:.unshift ROOT
 
-require "test/commands"
+def root(*args)
+File.join(ROOT, *args)
+end
 
-class Test::Unit::TestCase
-  include Test::Commands
-
-  def root(*args)
-    File.join(ROOT, *args)
+prepare do
+  Dir[root("test", "tmp", "*")].each do |file|
+    FileUtils.rm(file)
   end
+end
 
-  def setup
-    Dir[root("test", "tmp", "*")].each do |file|
-      FileUtils.rm(file)
-    end
-  end
-
-  def teardown
-    Dir[root("test", "tmp", "*")].each do |file|
-      FileUtils.rm(file)
-    end
-  end
-
-  def relay(args = nil)
-    sh("ruby -rubygems #{root "bin/relay"} #{args}")
-  end
+def relay(args = nil)
+  sh("ruby -rubygems #{root "bin/relay"} #{args}")
 end

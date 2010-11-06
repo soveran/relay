@@ -1,28 +1,18 @@
-require File.join(File.dirname(__FILE__), "test_helper")
+require File.expand_path("test_helper", File.dirname(__FILE__))
 
-class TestRelay < Test::Unit::TestCase
-  context "relay identify SERVER" do
-    should "copy the public key to SERVER" do
-      Dir.chdir(root("test", "tmp")) do
-        out, err = relay("identify localhost --path #{root("test", "tmp", "authorized_keys")}")
-
-        assert_match /copied/, out
-        assert File.exists?("authorized_keys")
-        assert File.read("authorized_keys")[/^ssh-/]
-      end
-    end
-
-    should "send a command to SERVER" do
+scope do
+  scope do
+    test "send a command to SERVER" do
       Dir.chdir(root("test", "tmp")) do
         FileUtils.touch("foobar")
 
-        out, err = relay("execute \"ls #{root("test", "tmp")}\" localhost")
+        out, err = relay("-c \"ls #{root("test", "tmp")}\" localhost")
 
-        assert_match /foobar/, out
+        assert out[/foobar/]
       end
     end
 
-    should "relay a recipe of commands to SERVER" do
+    test "relay a recipe of commands to SERVER" do
       Dir.chdir(root("test", "tmp")) do
         File.open("recipe.sh", "w") do |file|
           file.puts "cd #{root("test", "tmp")}"
@@ -30,18 +20,13 @@ class TestRelay < Test::Unit::TestCase
           file.puts "cat list"
         end
 
-        out, err = relay("recipe.sh localhost")
+        out, err = relay("-f recipe.sh localhost")
 
         assert out["$ cd #{root("test", "tmp")}"]
         assert out["$ ls -al > list"]
         assert out["$ cat list"]
         assert out["recipe.sh"]
       end
-    end
-
-    should "return the output when used programmatically" do
-      assert_equal ["foo\n"], Relay.execute("echo foo", "localhost")
-      assert_equal ["foo\n", "bar\n", "baz\n"], Relay.execute("echo foo; echo bar; echo baz", "localhost")
     end
   end
 end
