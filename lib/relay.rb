@@ -40,7 +40,7 @@ class Ssh
 end
 
 class Relay
-  VERSION = "0.1.0"
+  VERSION = "0.1.1"
 
   def initialize
     @recipes = []
