@@ -51,9 +51,8 @@ if ARGV.empty?
   exit
 end
 
+require "relay"
 require "clap"
-
-require File.expand_path("../lib/relay", File.dirname(__FILE__))
 
 relay = Relay.new
 
