@@ -21,5 +21,5 @@ prepare do
 end
 
 def relay(args = nil)
-  sh("ruby -rubygems #{root "bin/relay"} #{args}")
+  sh("ruby #{root "bin/relay"} #{args}")
 end
